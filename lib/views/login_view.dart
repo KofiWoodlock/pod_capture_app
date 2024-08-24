@@ -1,0 +1,161 @@
+// Import the necessary packages for Firebase authentication and Flutter's Material Design widgets.
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+// Define a stateful widget for the login view.
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+// Define the state class for the LoginView.
+class _LoginViewState extends State<LoginView> {
+  // Declare controllers for the email and password text fields.
+  late final TextEditingController _email;
+  late final TextEditingController _password;
+
+  @override
+  void initState() {
+    // Initialize the text controllers when the state is first created.
+    _email = TextEditingController();
+    _password = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the text controllers when the state is destroyed to free up resources.
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Build the UI for the login screen.
+    return Scaffold(
+      // App bar with the title 'Log in'.
+      appBar: AppBar(
+        title: const Text('Log in'),
+        backgroundColor: Colors.blue, // Set background color to blue.
+        foregroundColor: Colors.white, // Set text color to white.
+      ),
+      body: Column(
+        // Column to arrange the UI elements vertically.
+        children: [
+          // Text field for the user to enter their email.
+          TextField(
+            controller: _email, // Bind the controller to this text field.
+            enableSuggestions:
+                false, // Disable suggestions and autocorrect for email.
+            autocorrect: false,
+            keyboardType:
+                TextInputType.emailAddress, // Set keyboard type to email.
+            decoration: const InputDecoration(
+              hintText: 'Enter Email', // Placeholder text in the text field.
+            ),
+          ),
+          // Text field for the user to enter their password.
+          TextField(
+            controller: _password, // Bind the controller to this text field.
+            obscureText: true, // Obscure the text for password input.
+            enableSuggestions:
+                false, // Disable suggestions and autocorrect for password.
+            autocorrect: false,
+            decoration: const InputDecoration(
+              hintText: 'Enter Password', // Placeholder text in the text field.
+            ),
+          ),
+          // Button to trigger the login process.
+          TextButton(
+            onPressed: () async {
+              // When the button is pressed, retrieve the email and password from the text fields.
+              final email = _email.text;
+              final password = _password.text;
+              try {
+                // Attempt to sign in with the provided email and password using FirebaseAuth.
+                final userCredential =
+                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  email: email,
+                  password: password,
+                );
+
+                // Get the currently signed-in user.
+                final user = FirebaseAuth.instance.currentUser;
+                if (user != null) {
+                  // Check if the user's email is verified.
+                  if (user.emailVerified) {
+                    // If email is verified, navigate to the home page.
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/homePage', // Named route to HomePageView.
+                      (route) => false, // Remove all previous routes.
+                    );
+                  } else {
+                    // If email is not verified, show a snackbar message.
+                    ScaffoldMessenger.of(context).showMaterialBanner(
+                      MaterialBanner(
+                        content: const Text('Please verify your email'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                '/verifyEmail',
+                                (routes) => false,
+                              );
+                            },
+                            child: const Text('Ok'),
+                          ),
+                          TextButton(
+                            onPressed: ScaffoldMessenger.of(context)
+                                .hideCurrentMaterialBanner,
+                            child: const Text('Close'),
+                          ),
+                        ],
+                      ),
+                    );
+                    // Navigate to the email verification page.
+                    // ignore: use_build_context_synchronously
+                  }
+                }
+                print(userCredential); // Print user credentials for debugging.
+              } on FirebaseAuthException catch (e) {
+                // Handle errors during the login process.
+                if (e.code == 'invalid-credential') {
+                  print('Incorrect email or password');
+                  print(e.code); // Print the error code for debugging.
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Incorrect email or password.'),
+                    ),
+                  );
+                }
+                // Show a general error message if login fails.
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error! $e.'), // Display the error message.
+                  ),
+                );
+              }
+            },
+            child: const Text('Log in'), // Text displayed on the button.
+          ),
+          // Button to navigate to the registration page.
+          TextButton(
+            onPressed: () {
+              // When pressed, navigate to the registration page.
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/register', // Named route to RegistrationView.
+                (route) => false, // Remove all previous routes.
+              );
+            },
+            child: const Text(
+                'Not registered yet? Register here!'), // Button text.
+          )
+        ],
+      ),
+    );
+  }
+}
