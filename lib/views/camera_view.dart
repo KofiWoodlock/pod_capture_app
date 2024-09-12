@@ -4,10 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 
 class TakePictureScreen extends StatefulWidget {
-  const TakePictureScreen({
-    super.key,
-    required this.camera
-  });
+  const TakePictureScreen({super.key, required this.camera});
 
   final CameraDescription camera;
 

@@ -27,11 +27,16 @@ void main() async {
 
   runApp(
     MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Proof of Concept',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        brightness: Brightness.light,
+        primaryColor: const Color(0xff1b6ec2),
+        secondaryHeaderColor: const Color(0xffd3d3d3),
+        appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xffd3d3d3), foregroundColor: Colors.black),
       ),
-      home: const LoginView(),
+      home: const VerifyEmailView(),
       routes: {
         '/login': (context) => const LoginView(),
         '/register': (context) => const RegisterView(),

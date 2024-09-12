@@ -39,8 +39,6 @@ class _QrScanViewState extends State<QrScanView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('QR Scanner'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
         leading: BackButton(
           onPressed: () {
             Navigator.of(context).pushNamedAndRemoveUntil(

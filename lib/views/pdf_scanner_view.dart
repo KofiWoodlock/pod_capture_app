@@ -36,8 +36,6 @@ class _PdfScannerViewState extends State<PdfScannerView> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('PDF Scanner'), // AppBar title
-          backgroundColor: Colors.blue, // AppBar background color
-          foregroundColor: Colors.white, // AppBar text color
           leading: BackButton(
             // Back button to navigate back to the home page
             onPressed: () {
