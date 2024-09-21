@@ -22,6 +22,7 @@ dependencies:
   gallery_saver: ^2.3.2
   pdf: ^3.11.1
   path_provider: ^2.1.4
+  open_file: ^3.5.5
 
 dev_dependencies:
   flutter_test:

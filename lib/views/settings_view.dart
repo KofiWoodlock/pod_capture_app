@@ -31,7 +31,7 @@ class SettingsViewState extends State<SettingsView> {
         break;
       case 2:
         Navigator.of(context).pushNamedAndRemoveUntil(
-          '/',
+          '/homePage',
           (route) => false,
         );
         break;

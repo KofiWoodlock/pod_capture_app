@@ -1,14 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:testapp/firebase_options.dart';
-import 'package:testapp/views/camera_view.dart';
+import 'package:testapp/views/utils/camera_view.dart';
 import 'package:testapp/views/delivery_view.dart';
 import 'package:testapp/views/files_view.dart';
 import 'package:testapp/views/home_page_view.dart';
 import 'package:testapp/views/login_view.dart';
-import 'package:testapp/views/pdf_scanner_view.dart';
+import 'package:testapp/views/pod_capture_view.dart';
 import 'package:testapp/views/profile_view.dart';
-import 'package:testapp/views/qr_scan_view.dart';
+import 'package:testapp/views/utils/qr_scan_view.dart';
 import 'package:testapp/views/register_views.dart';
 import 'package:camera/camera.dart';
 import 'package:testapp/views/settings_view.dart';
@@ -40,13 +40,13 @@ void main() async {
         appBarTheme: const AppBarTheme(
             backgroundColor: Color(0xffd3d3d3), foregroundColor: Colors.black),
       ),
-      home: HomePageView(),
+      home: const LoginView(),
       routes: {
         '/login': (context) => const LoginView(),
         '/register': (context) => const RegisterView(),
         '/homePage': (context) => HomePageView(),
         '/qrScanner': (context) => const QrScanView(),
-        '/pdfScanner': (context) => const PdfScannerView(),
+        '/podCapture': (context) => const PodCaptureView(),
         '/camera': (context) => TakePictureScreen(camera: firstCamera),
         '/verifyEmail': (context) => const VerifyEmailView(),
         '/files': (context) => const FilesView(),

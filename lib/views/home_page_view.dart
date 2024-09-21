@@ -1,6 +1,4 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:testapp/views/camera_view.dart';
 
 class HomePageView extends StatefulWidget {
   const HomePageView({super.key});
@@ -33,7 +31,7 @@ class _HomePageViewState extends State<HomePageView> {
         break;
       case 2:
         Navigator.of(context).pushNamedAndRemoveUntil(
-          '/',
+          '/homePage',
           (route) => false,
         );
         break;

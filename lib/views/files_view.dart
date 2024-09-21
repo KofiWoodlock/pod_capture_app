@@ -31,7 +31,7 @@ class _FilesViewState extends State<FilesView> {
         break;
       case 2:
         Navigator.of(context).pushNamedAndRemoveUntil(
-          '/',
+          '/homePage',
           (route) => false,
         );
         break;
@@ -69,7 +69,7 @@ class _FilesViewState extends State<FilesView> {
           ],
         ),
       ),
-      body: Container(),
+      body: SingleChildScrollView(),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),

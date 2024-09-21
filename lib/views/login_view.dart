@@ -75,7 +75,7 @@ class _LoginViewState extends State<LoginView> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.all(5.0),
+                    padding: EdgeInsets.all(1.0),
                     child: Text(
                       "Use a local account to log in",
                       style: TextStyle(
@@ -197,8 +197,9 @@ class _LoginViewState extends State<LoginView> {
                     // Show a general error message if login fails.
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text(
-                            'Invalid Email/Password'), // Display the error message.
+                        content: Text('Invalid Email/Password'),
+                        // Display the error message.
+                        duration: Duration(milliseconds: 850),
                       ),
                     );
                   }

@@ -31,7 +31,7 @@ class ProfileViewState extends State<ProfileView> {
         break;
       case 2:
         Navigator.of(context).pushNamedAndRemoveUntil(
-          '/',
+          '/HomePage',
           (route) => false,
         );
         break;
