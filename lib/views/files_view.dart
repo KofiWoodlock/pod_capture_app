@@ -1,14 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FilesView extends StatefulWidget {
-  const FilesView({super.key});
+  final String? pdfFilePath;
+
+  const FilesView({super.key, required this.pdfFilePath});
 
   @override
   State<FilesView> createState() => _FilesViewState();
 }
 
 class _FilesViewState extends State<FilesView> {
+  String? _savedPdfFilePath;
   int selectedIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedPdfPath(); // Load saved pdf when widit is initialised
+  }
+
+  Future<void> _loadSavedPdfPath() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _savedPdfFilePath = prefs.getString('pdfFilePath');
+    });
+  }
 
   void onItemTapped(int index) {
     setState(() {
@@ -69,7 +87,29 @@ class _FilesViewState extends State<FilesView> {
           ],
         ),
       ),
-      body: SingleChildScrollView(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Display saved pdf's
+            if (_savedPdfFilePath != null)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  title: Text('Saved PDF: $_savedPdfFilePath'),
+                  onTap: () {
+                    OpenFile.open(_savedPdfFilePath!);
+                  },
+                  tileColor: Theme.of(context).primaryColor,
+                  textColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                ),
+              ),
+            if (_savedPdfFilePath == null)
+              const Center(child: Text('No PDF files saved')),
+          ],
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),

@@ -6,6 +6,9 @@ import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:testapp/views/files_view.dart';
 
 // Define the PodCaptureView widget as a stateful widget
 class PodCaptureView extends StatefulWidget {
@@ -24,6 +27,9 @@ class _PodCaptureViewState extends State<PodCaptureView> {
   //so it can be used in other methods
   File? file;
 
+  get date => _getCurrentDate();
+  late int counter = 0;
+
   @override
   void initState() {
     super.initState();
@@ -36,124 +42,133 @@ class _PodCaptureViewState extends State<PodCaptureView> {
   @override
   Widget build(BuildContext context) {
     // The main UI for the PDF scanner, built using a MaterialApp
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: ScaffoldMessenger(
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Center(child: Text('Scan Document')), // AppBar title
-            leading: BackButton(
-              // Back button to navigate back to the home page
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                    title: const Text("Warning"),
-                    content: const Text("Going back will delete unsaved scans"),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text("Cancel")),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                              '/delivery',
-                              (route) => false,
-                            );
-                          },
-                          child: const Text("Ok")),
-                    ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Center(child: Text('Scan Document')),
+        leading: BackButton(
+          // Back button to navigate back to the home page
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text("Warning"),
+                content: const Text("Any unsaved scans will be deleted"),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Cancel")),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/delivery',
+                          (route) => false,
+                        );
+                      },
+                      child: const Text("Ok")),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+      body: SingleChildScrollView(
+        // Allows the content to be scrollable if it overflows
+        child: Column(
+          children: [
+            // Button to initiate the document scanning process
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: onPressed,
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(
+                          Theme.of(context).primaryColor),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
+                    ), // Calls the onPressed method when tapped
+                    child: const Text('New scan'),
                   ),
-                );
-              },
-            ),
-          ),
-          body: SingleChildScrollView(
-            // Allows the content to be scrollable if it overflows
-            child: Column(
-              children: [
-                // Button to initiate the document scanning process
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: onPressed,
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(
-                              Theme.of(context).primaryColor),
-                          foregroundColor:
-                              WidgetStateProperty.all(Colors.white),
-                        ), // Calls the onPressed method when tapped
-                        child: const Text('New scan'),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (file != null) {
-                            OpenFile.open(file!.path);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        "No file to open"))); // TODO: fix error when trying to open pdf files with no scanned images
-                          }
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(
-                              Theme.of(context).primaryColor),
-                          foregroundColor:
-                              WidgetStateProperty.all(Colors.white),
-                        ),
-                        child: const Text('Open'),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Handle saving pdf to my files page and local device
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(
-                              Theme.of(context).primaryColor),
-                          foregroundColor:
-                              WidgetStateProperty.all(Colors.white),
-                        ),
-                        child: const Text('Save'),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Handle uploading to snapwire server
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(
-                              Theme.of(context).primaryColor),
-                          foregroundColor:
-                              WidgetStateProperty.all(Colors.white),
-                        ),
-                        child: const Text('Upload'),
-                      ),
-                    ],
+                  ElevatedButton(
+                    onPressed: () {
+                      if (file != null) {
+                        OpenFile.open(file!.path);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("No file to open"),
+                            duration: Duration(milliseconds: 800),
+                          ),
+                        );
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(
+                          Theme.of(context).primaryColor),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
+                    ),
+                    child: const Text('Open'),
                   ),
-                ),
-                // Display each scanned picture as an image
-                for (var picture in _pictures)
-                  Image.file(
-                    File(picture),
-                  ), // Create an Image widget for each scanned file
-              ],
+                  ElevatedButton(
+                    onPressed: () {
+                      _savePdf();
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(
+                          Theme.of(context).primaryColor),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
+                    ),
+                    child: const Text('Save'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (file != null) {
+                        //TODO: Handle uploading to snapwire server
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("No file to upload"),
+                            duration: Duration(milliseconds: 800),
+                          ),
+                        );
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(
+                          Theme.of(context).primaryColor),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
+                    ),
+                    child: const Text('Upload'),
+                  ),
+                ],
+              ),
             ),
-          ),
+            // Display each scanned picture as an image
+            for (var picture in _pictures)
+              Image.file(
+                File(picture),
+              ), // Create an Image widget for each scanned file
+          ],
         ),
       ),
     );
   }
 
+  String _getCurrentDate() {
+    final now = DateTime.now();
+    final formatter = DateFormat('dd-MM-yyyy');
+    return formatter.format(now);
+  }
+
   // Method that gets triggered when the 'Add Scan' button is pressed
   void onPressed() async {
+    counter++;
+    print('incremented counter: $counter');
     List<String> pictures;
     try {
-      // Use the CunningDocumentScanner package to start scanning documents
-      // and get a list of file paths for the scanned images
+      // Get list of pictures using cunningdocumentscanner library
       pictures = await CunningDocumentScanner.getPictures(
             isGalleryImportAllowed: true,
           ) ??
@@ -166,10 +181,10 @@ class _PodCaptureViewState extends State<PodCaptureView> {
       setState(() {
         _pictures = pictures;
       });
+
       // After user has scanned documents create a pdf with the list of images
       _createPdf();
     } catch (e) {
-      // Print any errors that occur during the scanning process
       print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -195,12 +210,44 @@ class _PodCaptureViewState extends State<PodCaptureView> {
         }));
       }
       final output = await getTemporaryDirectory();
-      file = File("${output.path}/example.pdf");
+      file = File("${output.path}/$date-$counter.pdf");
       await file!.writeAsBytes(await pdf.save());
       print("PDF created");
       // Display message to show user file has been created
     } on Exception catch (e) {
       print(e);
+    }
+  }
+
+  void _savePdf() async {
+    if (file != null) {
+      try {
+        // If save button pressed navigate to sharaed preferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('pdfFilePath', file!.path); // Save file path
+
+        // Navigate to FilesView with the file path
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FilesView(pdfFilePath: file!.path)),
+        );
+      } catch (e) {
+        print(e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Error saving pdf!"),
+            duration: Duration(milliseconds: 800),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("No file to save"),
+          duration: Duration(milliseconds: 800),
+        ),
+      );
     }
   }
 }

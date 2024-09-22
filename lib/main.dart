@@ -40,7 +40,7 @@ void main() async {
         appBarTheme: const AppBarTheme(
             backgroundColor: Color(0xffd3d3d3), foregroundColor: Colors.black),
       ),
-      home: const LoginView(),
+      home: const HomePageView(),
       routes: {
         '/login': (context) => const LoginView(),
         '/register': (context) => const RegisterView(),
@@ -49,7 +49,7 @@ void main() async {
         '/podCapture': (context) => const PodCaptureView(),
         '/camera': (context) => TakePictureScreen(camera: firstCamera),
         '/verifyEmail': (context) => const VerifyEmailView(),
-        '/files': (context) => const FilesView(),
+        '/files': (context) => const FilesView(pdfFilePath: '',),
         '/profile': (context) => const ProfileView(),
         '/settings': (context) => const SettingsView(),
         '/delivery': (context) => const DeliveryView(),
