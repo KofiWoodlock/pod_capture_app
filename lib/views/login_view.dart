@@ -1,6 +1,7 @@
 // Import the necessary packages for Firebase authentication and Flutter's Material Design widgets.
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as devtools show log;
 
 // Define a stateful widget for the login view.
 class LoginView extends StatefulWidget {
@@ -125,84 +126,14 @@ class _LoginViewState extends State<LoginView> {
             ),
             // Button to trigger the login process.
             Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding: const EdgeInsets.all(10.0),
               child: TextButton(
                 style: TextButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5))),
+                        borderRadius: BorderRadius.circular(8))),
                 onPressed: () async {
-                  // When the button is pressed, retrieve the email and password from the text fields.
-                  final email = _email.text;
-                  final password = _password.text;
-                  try {
-                    // Attempt to sign in with the provided email and password using FirebaseAuth.
-                    final userCredential =
-                        await FirebaseAuth.instance.signInWithEmailAndPassword(
-                      email: email,
-                      password: password,
-                    );
-
-                    // Get the currently signed-in user.
-                    final user = FirebaseAuth.instance.currentUser;
-                    if (user != null) {
-                      // Check if the user's email is verified.
-                      if (user.emailVerified) {
-                        // If email is verified, navigate to the home page.
-                        // ignore: use_build_context_synchronously
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/homePage', // Named route to HomePageView.
-                          (route) => false, // Remove all previous routes.
-                        );
-                      } else {
-                        // If email is not verified, show a material banner message.
-                        ScaffoldMessenger.of(context).showMaterialBanner(
-                          MaterialBanner(
-                            content: const Text('Please verify your email'),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                    '/verifyEmail',
-                                    (routes) => false,
-                                  );
-                                },
-                                child: const Text('Ok'),
-                              ),
-                              TextButton(
-                                onPressed: ScaffoldMessenger.of(context)
-                                    .hideCurrentMaterialBanner,
-                                child: const Text('Close'),
-                              ),
-                            ],
-                          ),
-                        );
-                        // Navigate to the email verification page.
-                        // ignore: use_build_context_synchronously
-                      }
-                    }
-                    print(
-                        userCredential); // Print user credentials for debugging.
-                  } on FirebaseAuthException catch (e) {
-                    // Handle errors during the login process.
-                    if (e.code == 'invalid-credential') {
-                      print('Incorrect email or password');
-                      print(e.code); // Print the error code for debugging.
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Incorrect email or password.'),
-                        ),
-                      );
-                    }
-                    // Show a general error message if login fails.
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Invalid Email/Password'),
-                        // Display the error message.
-                        duration: Duration(milliseconds: 850),
-                      ),
-                    );
-                  }
+                  _login(email: _email, password: _password);
                 },
                 child: const Text(
                   'Log in',
@@ -214,12 +145,12 @@ class _LoginViewState extends State<LoginView> {
             ),
             // Button to navigate to the registration page.
             Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding: const EdgeInsets.all(2.0),
               child: TextButton(
                 style: TextButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5))),
+                        borderRadius: BorderRadius.circular(8))),
                 onPressed: () {
                   // When pressed, navigate to the registration page.
                   Navigator.of(context).pushNamedAndRemoveUntil(
@@ -234,10 +165,92 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ), // Button text.
               ),
-            )
+            ),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/forgotPassword',
+                    (route) => false,
+                  );
+                },
+                child: const Text("Forgot Password?"))
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _login({required email, password}) async {
+    // When the button is pressed, retrieve the email and password from the text fields.
+    final email = _email.text;
+    final password = _password.text;
+    try {
+      // Attempt to sign in with the provided email and password using FirebaseAuth.
+      final userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Get the currently signed-in user.
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        // Check if the user's email is verified.
+        if (user.emailVerified) {
+          // If email is verified, navigate to the home page.
+          // ignore: use_build_context_synchronously
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            '/homePage', // Named route to HomePageView.
+            (route) => false, // Remove all previous routes.
+          );
+        } else {
+          // If email is not verified, show a material banner message.
+          ScaffoldMessenger.of(context).showMaterialBanner(
+            MaterialBanner(
+              content: const Text('Please verify your email'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/verifyEmail',
+                      (routes) => false,
+                    );
+                  },
+                  child: const Text('Ok'),
+                ),
+                TextButton(
+                  onPressed:
+                      ScaffoldMessenger.of(context).hideCurrentMaterialBanner,
+                  child: const Text('Close'),
+                ),
+              ],
+            ),
+          );
+          // Navigate to the email verification page.
+          // ignore: use_build_context_synchronously
+        }
+      }
+      devtools.log(
+          userCredential.toString()); // Print user credentials for debugging.
+    } on FirebaseAuthException catch (e) {
+      // Handle errors during the login process.
+      if (e.code == 'invalid-credential') {
+        devtools.log('Incorrect email or password');
+        devtools.log(e.code); // Print the error code for debugging.
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Incorrect email or password.'),
+          ),
+        );
+      }
+      // Show a general error message if login fails.
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Invalid Email/Password'),
+          // Display the error message.
+          duration: Duration(milliseconds: 800),
+        ),
+      );
+    }
   }
 }

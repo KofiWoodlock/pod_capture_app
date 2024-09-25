@@ -71,7 +71,7 @@ class _HomePageViewState extends State<HomePageView> {
       ),
       body: ListView(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 50,
             child: Center(
               child: Text(
@@ -84,11 +84,11 @@ class _HomePageViewState extends State<HomePageView> {
           ),
           Card(
             child: ListTile(
-              title: Text(
+              title: const Text(
                 "Delivery 1",
                 style: TextStyle(fontSize: 20),
               ),
-              subtitle: Text("Extra info"),
+              subtitle: const Text("Extra info"),
               onTap: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/delivery',
@@ -99,11 +99,11 @@ class _HomePageViewState extends State<HomePageView> {
           ),
           Card(
             child: ListTile(
-              title: Text(
+              title: const Text(
                 "Delivery 2",
                 style: TextStyle(fontSize: 20),
               ),
-              subtitle: Text("Extra info"),
+              subtitle: const Text("Extra info"),
               onTap: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/delivery',
@@ -114,11 +114,11 @@ class _HomePageViewState extends State<HomePageView> {
           ),
           Card(
             child: ListTile(
-              title: Text(
+              title: const Text(
                 "Delivery 3",
                 style: TextStyle(fontSize: 20),
               ),
-              subtitle: Text("Extra info"),
+              subtitle: const Text("Extra info"),
               onTap: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/delivery',
@@ -129,11 +129,11 @@ class _HomePageViewState extends State<HomePageView> {
           ),
           Card(
             child: ListTile(
-              title: Text(
+              title: const Text(
                 "Delivery 4",
                 style: TextStyle(fontSize: 20),
               ),
-              subtitle: Text("Extra info"),
+              subtitle: const Text("Extra info"),
               onTap: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/delivery',

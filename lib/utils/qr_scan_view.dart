@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'dart:developer' as devtools show log;
 
 class QrScanView extends StatefulWidget {
   const QrScanView({super.key});
@@ -54,7 +55,7 @@ class _QrScanViewState extends State<QrScanView> {
           final List<Barcode> barcodes = capture.barcodes;
           for (final barcode in barcodes) {
             final String qrData = barcode.rawValue ?? "No Data found in QR";
-            print(qrData);
+            devtools.log(qrData);
             _showDialog(qrData);
             break;
           }

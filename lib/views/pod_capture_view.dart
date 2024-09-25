@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:async';
+import 'dart:math';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
@@ -9,6 +10,7 @@ import 'package:open_file/open_file.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:testapp/views/files_view.dart';
+import 'dart:developer' as devtools show log;
 
 // Define the PodCaptureView widget as a stateful widget
 class PodCaptureView extends StatefulWidget {
@@ -22,13 +24,11 @@ class PodCaptureView extends StatefulWidget {
 class _PodCaptureViewState extends State<PodCaptureView> {
   // Create an empty list to store the file paths of scanned images
   List<String> _pictures = [];
+  get date => _getCurrentDate();
 
   // Declare file variable as a class level variable
   //so it can be used in other methods
   File? file;
-
-  get date => _getCurrentDate();
-  late int counter = 0;
 
   @override
   void initState() {
@@ -78,72 +78,70 @@ class _PodCaptureViewState extends State<PodCaptureView> {
         child: Column(
           children: [
             // Button to initiate the document scanning process
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: onPressed,
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(
-                          Theme.of(context).primaryColor),
-                      foregroundColor: WidgetStateProperty.all(Colors.white),
-                    ), // Calls the onPressed method when tapped
-                    child: const Text('New scan'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: onPressed,
+                  style: ButtonStyle(
+                    backgroundColor:
+                        WidgetStateProperty.all(Theme.of(context).primaryColor),
+                    foregroundColor: WidgetStateProperty.all(Colors.white),
+                  ), // Calls the onPressed method when tapped
+                  child: const Text('New scan'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (file != null) {
+                      OpenFile.open(file!.path);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("No file to open"),
+                          duration: Duration(milliseconds: 800),
+                        ),
+                      );
+                    }
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        WidgetStateProperty.all(Theme.of(context).primaryColor),
+                    foregroundColor: WidgetStateProperty.all(Colors.white),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (file != null) {
-                        OpenFile.open(file!.path);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("No file to open"),
-                            duration: Duration(milliseconds: 800),
-                          ),
-                        );
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(
-                          Theme.of(context).primaryColor),
-                      foregroundColor: WidgetStateProperty.all(Colors.white),
-                    ),
-                    child: const Text('Open'),
+                  child: const Text('Open'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _savePdf();
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        WidgetStateProperty.all(Theme.of(context).primaryColor),
+                    foregroundColor: WidgetStateProperty.all(Colors.white),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      _savePdf();
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(
-                          Theme.of(context).primaryColor),
-                      foregroundColor: WidgetStateProperty.all(Colors.white),
-                    ),
-                    child: const Text('Save'),
+                  child: const Text('Save'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (file != null) {
+                      //TODO: Handle uploading to snapwire server
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("No file to upload"),
+                          duration: Duration(milliseconds: 800),
+                        ),
+                      );
+                    }
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        WidgetStateProperty.all(Theme.of(context).primaryColor),
+                    foregroundColor: WidgetStateProperty.all(Colors.white),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (file != null) {
-                        //TODO: Handle uploading to snapwire server
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("No file to upload"),
-                            duration: Duration(milliseconds: 800),
-                          ),
-                        );
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(
-                          Theme.of(context).primaryColor),
-                      foregroundColor: WidgetStateProperty.all(Colors.white),
-                    ),
-                    child: const Text('Upload'),
-                  ),
-                ],
-              ),
+                  child: const Text('Upload'),
+                ),
+              ],
             ),
             // Display each scanned picture as an image
             for (var picture in _pictures)
@@ -158,14 +156,12 @@ class _PodCaptureViewState extends State<PodCaptureView> {
 
   String _getCurrentDate() {
     final now = DateTime.now();
-    final formatter = DateFormat('dd-MM-yyyy');
+    final formatter = DateFormat('dd-MM-yyyy kk:mm');
     return formatter.format(now);
   }
 
   // Method that gets triggered when the 'Add Scan' button is pressed
   void onPressed() async {
-    counter++;
-    print('incremented counter: $counter');
     List<String> pictures;
     try {
       // Get list of pictures using cunningdocumentscanner library
@@ -185,7 +181,7 @@ class _PodCaptureViewState extends State<PodCaptureView> {
       // After user has scanned documents create a pdf with the list of images
       _createPdf();
     } catch (e) {
-      print(e);
+      devtools.log(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error! $e'),
@@ -196,6 +192,9 @@ class _PodCaptureViewState extends State<PodCaptureView> {
 
   Future<void> _createPdf() async {
     final pdf = pw.Document();
+    // Randomply generate a 4 digit id so each file path is unique
+    Random random = Random();
+    int pdfId = random.nextInt(10000);
 
     // Iteratre through the list of images and add them to pdf file
     try {
@@ -210,33 +209,40 @@ class _PodCaptureViewState extends State<PodCaptureView> {
         }));
       }
       final output = await getTemporaryDirectory();
-      file = File("${output.path}/$date-$counter.pdf");
+      file = File("${output.path}/$date-$pdfId.pdf");
       await file!.writeAsBytes(await pdf.save());
-      print("PDF created");
+      devtools.log("PDF created");
       // Display message to show user file has been created
     } on Exception catch (e) {
-      print(e);
+      devtools.log(e.toString());
     }
   }
 
   void _savePdf() async {
     if (file != null) {
       try {
-        // If save button pressed navigate to sharaed preferences
+        // Fetch current list of saved PDF's from SharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('pdfFilePath', file!.path); // Save file path
+        List<String> pdfList = prefs.getStringList('pdfFilePaths') ?? [];
+
+        // Add new PDF file path to the list
+        pdfList.add(file!.path);
+
+        //Save updated list to SharedPreferences
+        await prefs.setStringList('pdfFilePaths', pdfList);
 
         // Navigate to FilesView with the file path
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => FilesView(pdfFilePath: file!.path)),
+            builder: (context) => const FilesView(),
+          ),
         );
       } catch (e) {
-        print(e);
+        devtools.log(e.toString());
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Error saving pdf!"),
+            content: Text("Error saving PDF!"),
             duration: Duration(milliseconds: 800),
           ),
         );

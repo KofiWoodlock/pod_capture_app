@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'dart:developer' as devtools show log;
 
 class TakePictureScreen extends StatefulWidget {
   const TakePictureScreen({super.key, required this.camera});
@@ -71,7 +72,7 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
               ),
             );
           } catch (e) {
-            print(e);
+            devtools.log(e.toString());
           }
         },
         child: const Icon(Icons.camera_alt),

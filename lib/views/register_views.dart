@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as devtools show log;
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -105,39 +106,44 @@ class _RegisterViewState extends State<RegisterView> {
                   email: email,
                   password: password,
                 );
-                print(userCredential);
+                devtools.log(userCredential.toString());
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Successfully registered!'),
+                    duration: Duration(milliseconds: 800),
                   ),
                 );
               } on FirebaseAuthException catch (e) {
-                print(e);
+                devtools.log(e.toString());
                 if (e.code == 'weak-password') {
-                  print('Weak Password');
+                  devtools.log('Weak Password');
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Weak password'),
+                      duration: Duration(milliseconds: 800),
                     ),
                   );
                 } else if (e.code == 'email-already-in-use') {
-                  print('Email already in use');
+                  devtools.log('Email already in use');
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Email already in use'),
+                      duration: Duration(milliseconds: 800),
                     ),
                   );
                 } else if (e.code == 'invalid-email') {
-                  print('Invalid Email');
+                  devtools.log('Invalid Email');
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Invalid email'),
+                      duration: Duration(milliseconds: 800),
                     ),
                   );
                 } else if (e.code == 'channel-error') {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text("Error! Blank credentials"),
+                      duration: Duration(milliseconds: 800),
                     ),
                   );
                 }

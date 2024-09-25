@@ -1,31 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer' as devtools show log;
 
 class FilesView extends StatefulWidget {
-  final String? pdfFilePath;
-
-  const FilesView({super.key, required this.pdfFilePath});
+  const FilesView({super.key});
 
   @override
   State<FilesView> createState() => _FilesViewState();
 }
 
 class _FilesViewState extends State<FilesView> {
-  String? _savedPdfFilePath;
+  List<String> _savedPdfFilePaths = [];
   int selectedIndex = 1;
 
   @override
   void initState() {
     super.initState();
     _loadSavedPdfPath(); // Load saved pdf when widit is initialised
-  }
-
-  Future<void> _loadSavedPdfPath() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _savedPdfFilePath = prefs.getString('pdfFilePath');
-    });
   }
 
   void onItemTapped(int index) {
@@ -87,29 +79,67 @@ class _FilesViewState extends State<FilesView> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Display saved pdf's
-            if (_savedPdfFilePath != null)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  title: Text('Saved PDF: $_savedPdfFilePath'),
-                  onTap: () {
-                    OpenFile.open(_savedPdfFilePath!);
+      body: _savedPdfFilePaths.isNotEmpty
+          ? ListView.builder(
+              itemCount: _savedPdfFilePaths.length,
+              itemBuilder: (context, index) {
+                final filePath = _savedPdfFilePaths[index];
+                return Dismissible(
+                  key: Key(filePath),
+                  direction: DismissDirection.endToStart,
+                  onDismissed: (direction) async {
+                    try {
+                      setState(() {
+                        _savedPdfFilePaths.removeAt(index);
+                      });
+                    } on Exception catch (e) {
+                      devtools.log(e.toString());
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Error when deleting PDF!")));
+                    }
+                    // Update the shared prefences to reflect the list
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    await prefs.setStringList(
+                        'pdfFilePaths', _savedPdfFilePaths);
+                    devtools.log('$filePath Deleted');
+
+                    // Display message to show PDF has been deleted
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("PDF deleted"),
+                      ),
+                    );
                   },
-                  tileColor: Theme.of(context).primaryColor,
-                  textColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                ),
-              ),
-            if (_savedPdfFilePath == null)
-              const Center(child: Text('No PDF files saved')),
-          ],
-        ),
-      ),
+                  background: Container(
+                    color: Colors.red,
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: const Icon(
+                      Icons.delete,
+                      color: Colors.white,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                      title: Text('Saved PDF: $filePath'),
+                      onTap: () {
+                        OpenFile.open(filePath);
+                      },
+                      tileColor: Theme.of(context).primaryColor,
+                      textColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            )
+          : const Center(
+              child: Text('No PDF files saved'),
+            ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),
@@ -125,5 +155,13 @@ class _FilesViewState extends State<FilesView> {
         onTap: onItemTapped,
       ),
     );
+  }
+
+  Future<void> _loadSavedPdfPath() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      // Fetch the list of saved PDF paths
+      _savedPdfFilePaths = prefs.getStringList('pdfFilePaths') ?? [];
+    });
   }
 }

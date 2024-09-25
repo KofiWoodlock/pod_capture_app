@@ -82,15 +82,15 @@ class _DeliveryViewState extends State<DeliveryView> {
                       '/podCapture',
                       (route) => false,
                     );
-                  },
-                  child: Icon(Icons.document_scanner), // POD scan btn
+                  }, // POD scan btn
                   style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all(
                           Theme.of(context).primaryColor),
                       foregroundColor: WidgetStateProperty.all(Colors.white),
                       iconSize: WidgetStateProperty.all(35),
-                      shape: WidgetStateProperty.all(CircleBorder()),
-                      padding: WidgetStateProperty.all(EdgeInsets.all(12))),
+                      shape: WidgetStateProperty.all(const CircleBorder()),
+                      padding: WidgetStateProperty.all(const EdgeInsets.all(12))),
+                  child: const Icon(Icons.document_scanner),
                 ),
               ),
             ),
@@ -101,32 +101,32 @@ class _DeliveryViewState extends State<DeliveryView> {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
-                      title: Text("Cancel"),
+                      title: const Text("Cancel"),
                       content:
-                          Text("Are you sure you want to cancel delivery?"),
+                          const Text("Are you sure you want to cancel delivery?"),
                       actions: [
                         TextButton(
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: Text("No")),
+                            child: const Text("No")),
                         TextButton(
                             onPressed: () {
                               // Handle removing the delivery from homepage
                             },
-                            child: Text("Yes")),
+                            child: const Text("Yes")),
                       ],
                     ),
                   );
                 },
-                child: Text(
-                  "Cancel delivery",
-                  style: TextStyle(fontSize: 16),
-                ),
                 style: ButtonStyle(
                   backgroundColor:
                       WidgetStateProperty.all(Theme.of(context).primaryColor),
                   foregroundColor: WidgetStateProperty.all(Colors.white),
+                ),
+                child: const Text(
+                  "Cancel delivery",
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
             ),
