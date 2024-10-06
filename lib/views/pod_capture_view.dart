@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:testapp/views/files_view.dart';
 import 'dart:developer' as devtools show log;
+import 'package:firebase_storage/firebase_storage.dart';
 
 // Define the PodCaptureView widget as a stateful widget
 class PodCaptureView extends StatefulWidget {
@@ -22,13 +23,20 @@ class PodCaptureView extends StatefulWidget {
 
 // Define the state for PodCaptureView
 class _PodCaptureViewState extends State<PodCaptureView> {
-  // Create an empty list to store the file paths of scanned images
+  // Create an empty array to store the file paths of scanned images
   List<String> _pictures = [];
   get date => _getCurrentDate();
 
   // Declare file variable as a class level variable
   //so it can be used in other methods
   File? file;
+
+  // upload progress indicator variable
+  double uploadProgress = 0.0;
+
+  // Initialise firebase cloud firestore for storage of pdf files
+  final storage = FirebaseStorage.instance;
+  final storageRef = FirebaseStorage.instance.ref();
 
   @override
   void initState() {
@@ -82,7 +90,7 @@ class _PodCaptureViewState extends State<PodCaptureView> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                  onPressed: onPressed,
+                  onPressed: addScan,
                   style: ButtonStyle(
                     backgroundColor:
                         WidgetStateProperty.all(Theme.of(context).primaryColor),
@@ -124,7 +132,7 @@ class _PodCaptureViewState extends State<PodCaptureView> {
                 ElevatedButton(
                   onPressed: () {
                     if (file != null) {
-                      //TODO: Handle uploading to snapwire server
+                      uplaodPdf();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -143,6 +151,14 @@ class _PodCaptureViewState extends State<PodCaptureView> {
                 ),
               ],
             ),
+            if (uploadProgress > 0.0 && uploadProgress < 100.0)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: LinearProgressIndicator(
+                  value: uploadProgress / 100, // Display progress
+                  semanticsLabel: "Linear progress indicator",
+                ),
+              ),
             // Display each scanned picture as an image
             for (var picture in _pictures)
               Image.file(
@@ -161,7 +177,7 @@ class _PodCaptureViewState extends State<PodCaptureView> {
   }
 
   // Method that gets triggered when the 'Add Scan' button is pressed
-  void onPressed() async {
+  void addScan() async {
     List<String> pictures;
     try {
       // Get list of pictures using cunningdocumentscanner library
@@ -210,6 +226,7 @@ class _PodCaptureViewState extends State<PodCaptureView> {
       }
       final output = await getTemporaryDirectory();
       file = File("${output.path}/$date-$pdfId.pdf");
+      devtools.log(file.toString());
       await file!.writeAsBytes(await pdf.save());
       devtools.log("PDF created");
       // Display message to show user file has been created
@@ -254,6 +271,74 @@ class _PodCaptureViewState extends State<PodCaptureView> {
           duration: Duration(milliseconds: 800),
         ),
       );
+    }
+  }
+
+  void uplaodPdf() async {
+    if (file != null) {
+      try {
+        final String fileName =
+            '${_getCurrentDate()}_${file!.path.split('/').last}';
+        final pdfRef = storageRef.child('pdfs/$fileName');
+
+        final uploadTask = pdfRef.putFile(file!);
+
+        uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
+          switch (taskSnapshot.state) {
+            case TaskState.running:
+              final progress = 100 *
+                  (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
+              setState(() {
+                uploadProgress = progress;
+              });
+              break;
+            case TaskState.paused:
+              devtools.log("Upload Paused");
+              break;
+            case TaskState.canceled:
+              devtools.log("Upload Cancelled");
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Upload Cancelled")));
+              break;
+            case TaskState.error:
+              devtools.log("Error Uploading");
+              break;
+            case TaskState.success:
+              devtools.log("Upload complete");
+              setState(() {
+                uploadProgress = 0.0;
+              });
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          // route to home page
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, "/homePage", (route) => false);
+                        },
+                        child: const Text("Ok"),
+                      ),
+                    ],
+                    title: const Text("Upload complete"),
+                    content: const Text(
+                        "The pdf file has been successfully uploaded "),
+                  );
+                },
+              );
+              break;
+          }
+        });
+      } catch (e) {
+        devtools.log("Upload failed: $e");
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Upload Failed")));
+      }
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("No file to upload")));
     }
   }
 }

@@ -87,7 +87,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                 style: TextStyle(color: Colors.white),
               ),
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 10),
             TextButton(
               onPressed: () {
                 Navigator.of(context)

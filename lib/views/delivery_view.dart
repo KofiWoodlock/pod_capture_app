@@ -89,7 +89,8 @@ class _DeliveryViewState extends State<DeliveryView> {
                       foregroundColor: WidgetStateProperty.all(Colors.white),
                       iconSize: WidgetStateProperty.all(35),
                       shape: WidgetStateProperty.all(const CircleBorder()),
-                      padding: WidgetStateProperty.all(const EdgeInsets.all(12))),
+                      padding:
+                          WidgetStateProperty.all(const EdgeInsets.all(12))),
                   child: const Icon(Icons.document_scanner),
                 ),
               ),
@@ -102,8 +103,8 @@ class _DeliveryViewState extends State<DeliveryView> {
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
                       title: const Text("Cancel"),
-                      content:
-                          const Text("Are you sure you want to cancel delivery?"),
+                      content: const Text(
+                          "Are you sure you want to cancel delivery?"),
                       actions: [
                         TextButton(
                             onPressed: () {
@@ -112,7 +113,22 @@ class _DeliveryViewState extends State<DeliveryView> {
                             child: const Text("No")),
                         TextButton(
                             onPressed: () {
-                              // Handle removing the delivery from homepage
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        title: const Text("Delivery Cancelled"),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator
+                                                    .pushNamedAndRemoveUntil(
+                                                        context,
+                                                        "/homePage",
+                                                        (route) => false);
+                                              },
+                                              child: const Text("Ok"))
+                                        ],
+                                      ));
                             },
                             child: const Text("Yes")),
                       ],

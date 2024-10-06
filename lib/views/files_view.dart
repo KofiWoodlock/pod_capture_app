@@ -47,7 +47,7 @@ class _FilesViewState extends State<FilesView> {
         break;
       case 3:
         Navigator.of(context).pushNamedAndRemoveUntil(
-          '/profile',
+          '/account',
           (route) => false,
         );
         break;
@@ -145,7 +145,7 @@ class _FilesViewState extends State<FilesView> {
           BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),
           BottomNavigationBarItem(icon: Icon(Icons.folder), label: "My Files"),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Account"),
           BottomNavigationBarItem(
               icon: Icon(Icons.settings), label: "Settings"),
         ],

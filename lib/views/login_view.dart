@@ -159,7 +159,7 @@ class _LoginViewState extends State<LoginView> {
                   );
                 },
                 child: const Text(
-                  'Not registered? Register here!',
+                  'Create Account',
                   style: TextStyle(
                     color: Colors.white,
                   ),
@@ -198,7 +198,6 @@ class _LoginViewState extends State<LoginView> {
         // Check if the user's email is verified.
         if (user.emailVerified) {
           // If email is verified, navigate to the home page.
-          // ignore: use_build_context_synchronously
           Navigator.of(context).pushNamedAndRemoveUntil(
             '/homePage', // Named route to HomePageView.
             (route) => false, // Remove all previous routes.
@@ -210,13 +209,11 @@ class _LoginViewState extends State<LoginView> {
               content: const Text('Please verify your email'),
               actions: <Widget>[
                 TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/verifyEmail',
-                      (routes) => false,
-                    );
+                  onPressed: () async {
+                    final user = FirebaseAuth.instance.currentUser;
+                    await user?.sendEmailVerification();
                   },
-                  child: const Text('Ok'),
+                  child: const Text('Send verification email'),
                 ),
                 TextButton(
                   onPressed:
@@ -226,8 +223,6 @@ class _LoginViewState extends State<LoginView> {
               ],
             ),
           );
-          // Navigate to the email verification page.
-          // ignore: use_build_context_synchronously
         }
       }
       devtools.log(

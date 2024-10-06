@@ -37,7 +37,7 @@ class _HomePageViewState extends State<HomePageView> {
         break;
       case 3:
         Navigator.of(context).pushNamedAndRemoveUntil(
-          '/profile',
+          '/account',
           (route) => false,
         );
         break;
@@ -85,7 +85,7 @@ class _HomePageViewState extends State<HomePageView> {
           Card(
             child: ListTile(
               title: const Text(
-                "Delivery 1",
+                "4902-FCA",
                 style: TextStyle(fontSize: 20),
               ),
               subtitle: const Text("Extra info"),
@@ -100,7 +100,7 @@ class _HomePageViewState extends State<HomePageView> {
           Card(
             child: ListTile(
               title: const Text(
-                "Delivery 2",
+                "4901-FCA",
                 style: TextStyle(fontSize: 20),
               ),
               subtitle: const Text("Extra info"),
@@ -115,7 +115,7 @@ class _HomePageViewState extends State<HomePageView> {
           Card(
             child: ListTile(
               title: const Text(
-                "Delivery 3",
+                "4900-FCA",
                 style: TextStyle(fontSize: 20),
               ),
               subtitle: const Text("Extra info"),
@@ -130,7 +130,7 @@ class _HomePageViewState extends State<HomePageView> {
           Card(
             child: ListTile(
               title: const Text(
-                "Delivery 4",
+                "4899-FCA",
                 style: TextStyle(fontSize: 20),
               ),
               subtitle: const Text("Extra info"),
@@ -141,7 +141,67 @@ class _HomePageViewState extends State<HomePageView> {
                 );
               },
             ),
-          )
+          ),
+          Card(
+            child: ListTile(
+              title: const Text(
+                "4899-FCA",
+                style: TextStyle(fontSize: 20),
+              ),
+              subtitle: const Text("Extra info"),
+              onTap: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/delivery',
+                  (route) => false,
+                );
+              },
+            ),
+          ),
+          Card(
+            child: ListTile(
+              title: const Text(
+                "4898-FCA	",
+                style: TextStyle(fontSize: 20),
+              ),
+              subtitle: const Text("Extra info"),
+              onTap: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/delivery',
+                  (route) => false,
+                );
+              },
+            ),
+          ),
+          Card(
+            child: ListTile(
+              title: const Text(
+                "4895-FCA",
+                style: TextStyle(fontSize: 20),
+              ),
+              subtitle: const Text("Extra info"),
+              onTap: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/delivery',
+                  (route) => false,
+                );
+              },
+            ),
+          ),
+          Card(
+            child: ListTile(
+              title: const Text(
+                "4894-FCA	",
+                style: TextStyle(fontSize: 20),
+              ),
+              subtitle: const Text("Extra info"),
+              onTap: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/delivery',
+                  (route) => false,
+                );
+              },
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -149,7 +209,7 @@ class _HomePageViewState extends State<HomePageView> {
           BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),
           BottomNavigationBarItem(icon: Icon(Icons.folder), label: "My Files"),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Account"),
           BottomNavigationBarItem(
               icon: Icon(Icons.settings), label: "Settings"),
         ],

@@ -98,59 +98,10 @@ class _RegisterViewState extends State<RegisterView> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5))),
             onPressed: () async {
-              final email = _email.text;
-              final password = _password.text;
-              try {
-                final userCredential =
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: email,
-                  password: password,
-                );
-                devtools.log(userCredential.toString());
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Successfully registered!'),
-                    duration: Duration(milliseconds: 800),
-                  ),
-                );
-              } on FirebaseAuthException catch (e) {
-                devtools.log(e.toString());
-                if (e.code == 'weak-password') {
-                  devtools.log('Weak Password');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Weak password'),
-                      duration: Duration(milliseconds: 800),
-                    ),
-                  );
-                } else if (e.code == 'email-already-in-use') {
-                  devtools.log('Email already in use');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Email already in use'),
-                      duration: Duration(milliseconds: 800),
-                    ),
-                  );
-                } else if (e.code == 'invalid-email') {
-                  devtools.log('Invalid Email');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Invalid email'),
-                      duration: Duration(milliseconds: 800),
-                    ),
-                  );
-                } else if (e.code == 'channel-error') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Error! Blank credentials"),
-                      duration: Duration(milliseconds: 800),
-                    ),
-                  );
-                }
-              }
+              _createAccount(email: _email, password: _password);
             },
             child: const Text(
-              'Register',
+              'Create Account',
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -170,12 +121,66 @@ class _RegisterViewState extends State<RegisterView> {
               );
             },
             child: const Text(
-              'Already registered? Log in here!',
+              'Return to login',
               style: TextStyle(color: Colors.white),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _createAccount({required email, password}) async {
+    final email = _email.text;
+    final password = _password.text;
+    try {
+      final userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      devtools.log(userCredential.toString());
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Successfully created account!'),
+          duration: Duration(milliseconds: 1000),
+        ),
+      );
+      Navigator.of(context).pushNamedAndRemoveUntil("/login", (route) => false);
+    } on FirebaseAuthException catch (e) {
+      devtools.log(e.toString());
+      if (e.code == 'weak-password') {
+        devtools.log('Weak Password');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Password must at least 6 characters'),
+            duration: Duration(milliseconds: 1500),
+          ),
+        );
+      } else if (e.code == 'email-already-in-use') {
+        devtools.log('Email already in use');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Email already in use'),
+            duration: Duration(milliseconds: 800),
+          ),
+        );
+      } else if (e.code == 'invalid-email') {
+        devtools.log('Invalid Email');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Invalid email'),
+            duration: Duration(milliseconds: 800),
+          ),
+        );
+      } else if (e.code == 'channel-error') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Error! Blank credentials"),
+            duration: Duration(milliseconds: 800),
+          ),
+        );
+      }
+    }
   }
 }

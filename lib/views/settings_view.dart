@@ -37,7 +37,7 @@ class SettingsViewState extends State<SettingsView> {
         break;
       case 3:
         Navigator.of(context).pushNamedAndRemoveUntil(
-          '/profile',
+          '/account',
           (route) => false,
         );
         break;
@@ -52,6 +52,7 @@ class SettingsViewState extends State<SettingsView> {
 
   @override
   Widget build(BuildContext context) {
+    double deviceHeight = MediaQuery.sizeOf(context).height;
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -69,13 +70,20 @@ class SettingsViewState extends State<SettingsView> {
           ],
         ),
       ),
-      body: Container(),
+      body: SizedBox(
+        height: deviceHeight,
+        child: const Column(
+          children: [
+            Text(""),
+          ],
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),
           BottomNavigationBarItem(icon: Icon(Icons.folder), label: "My Files"),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Account"),
           BottomNavigationBarItem(
               icon: Icon(Icons.settings), label: "Settings"),
         ],
