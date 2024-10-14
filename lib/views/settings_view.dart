@@ -71,13 +71,10 @@ class SettingsViewState extends State<SettingsView> {
         ),
       ),
       body: SizedBox(
-        height: deviceHeight,
-        child: const Column(
-          children: [
-            Text(""),
-          ],
-        ),
-      ),
+          height: deviceHeight,
+          child: const Center(
+            child: Text("Work In Progress"),
+          )),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:developer' as devtools show log;
 
 class HomePageView extends StatefulWidget {
   const HomePageView({super.key});
@@ -9,6 +10,28 @@ class HomePageView extends StatefulWidget {
 
 class _HomePageViewState extends State<HomePageView> {
   int selectedIndex = 2;
+
+  // TODO: Dynamically fetch data from Snapwire to populate delivery tasks?
+  // 
+
+  final List<Map<String, String>> deliveries = [
+    {"id": "4902-FCA", "info": "Extra info"},
+    {"id": "4901-FCA", "info": "Extra info"},
+    {"id": "4900-FCA", "info": "Extra info"},
+    {"id": "4899-FCA", "info": "Extra info"},
+    {"id": "4898-FCA", "info": "Extra info"},
+    {"id": "4897-FCA", "info": "Extra info"},
+    {"id": "4896-FCA", "info": "Extra info"},
+    {"id": "4895-FCA", "info": "Extra info"},
+    {"id": "4894-FCA", "info": "Extra info"},
+  ];
+
+  void removeDelivery(String deliveryId) {
+    setState(() {
+      deliveries.removeWhere((delivery) => delivery["id"] == deliveryId);
+      devtools.log("Removed delivery: $deliveryId");
+    });
+  }
 
   void onItemTapped(int index) {
     setState(() {
@@ -69,141 +92,28 @@ class _HomePageViewState extends State<HomePageView> {
           ],
         ),
       ),
-      body: ListView(
-        children: [
-          const SizedBox(
-            height: 50,
-            child: Center(
-              child: Text(
-                "Current Deliveries",
-                style: TextStyle(
-                  fontSize: 24,
+      body: ListView.builder(
+          itemCount: deliveries.length,
+          itemBuilder: (context, index) {
+            return Card(
+              child: ListTile(
+                title: Text(
+                  deliveries[index]["id"]!,
+                  style: const TextStyle(fontSize: 24),
                 ),
+                subtitle: Text(deliveries[index]["info"]!),
+                onTap: () {
+                  Navigator.of(context).pushNamed(
+                    '/delivery',
+                    arguments: {
+                      'id': deliveries[index]["id"],
+                      'removeDelivery': removeDelivery,
+                    },
+                  );
+                },
               ),
-            ),
-          ),
-          Card(
-            child: ListTile(
-              title: const Text(
-                "4902-FCA",
-                style: TextStyle(fontSize: 20),
-              ),
-              subtitle: const Text("Extra info"),
-              onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/delivery',
-                  (route) => false,
-                );
-              },
-            ),
-          ),
-          Card(
-            child: ListTile(
-              title: const Text(
-                "4901-FCA",
-                style: TextStyle(fontSize: 20),
-              ),
-              subtitle: const Text("Extra info"),
-              onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/delivery',
-                  (route) => false,
-                );
-              },
-            ),
-          ),
-          Card(
-            child: ListTile(
-              title: const Text(
-                "4900-FCA",
-                style: TextStyle(fontSize: 20),
-              ),
-              subtitle: const Text("Extra info"),
-              onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/delivery',
-                  (route) => false,
-                );
-              },
-            ),
-          ),
-          Card(
-            child: ListTile(
-              title: const Text(
-                "4899-FCA",
-                style: TextStyle(fontSize: 20),
-              ),
-              subtitle: const Text("Extra info"),
-              onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/delivery',
-                  (route) => false,
-                );
-              },
-            ),
-          ),
-          Card(
-            child: ListTile(
-              title: const Text(
-                "4899-FCA",
-                style: TextStyle(fontSize: 20),
-              ),
-              subtitle: const Text("Extra info"),
-              onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/delivery',
-                  (route) => false,
-                );
-              },
-            ),
-          ),
-          Card(
-            child: ListTile(
-              title: const Text(
-                "4898-FCA	",
-                style: TextStyle(fontSize: 20),
-              ),
-              subtitle: const Text("Extra info"),
-              onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/delivery',
-                  (route) => false,
-                );
-              },
-            ),
-          ),
-          Card(
-            child: ListTile(
-              title: const Text(
-                "4895-FCA",
-                style: TextStyle(fontSize: 20),
-              ),
-              subtitle: const Text("Extra info"),
-              onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/delivery',
-                  (route) => false,
-                );
-              },
-            ),
-          ),
-          Card(
-            child: ListTile(
-              title: const Text(
-                "4894-FCA	",
-                style: TextStyle(fontSize: 20),
-              ),
-              subtitle: const Text("Extra info"),
-              onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/delivery',
-                  (route) => false,
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+            );
+          }),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),

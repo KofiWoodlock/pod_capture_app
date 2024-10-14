@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:developer' as devtools show log;
 
 class DeliveryView extends StatefulWidget {
   const DeliveryView({super.key});
@@ -8,20 +9,44 @@ class DeliveryView extends StatefulWidget {
 }
 
 class _DeliveryViewState extends State<DeliveryView> {
+  String? deliveryId;
+  Function? removeDelivery;
+
   @override
   void initState() {
     super.initState();
-    // Initialize any platform-specific features or permissions
-    initPlatformState();
+    // Do not access inherited widgets here
   }
 
-  // This method is used to initialize platform-specific states (e.g., permissions)
-  Future<void> initPlatformState() async {
-    // Currently, this method does nothing, but it's here to handle future needs
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Fetch arguments from ModalRoute safely
+    final args = ModalRoute.of(context)?.settings.arguments;
+
+    if (args is Map<String, dynamic>) {
+      deliveryId = args['id'];
+      removeDelivery = args['removeDelivery'];
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (deliveryId == null || removeDelivery == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("No delivery to remove"),
+        ),
+      );
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Error'),
+        ),
+        body: const Center(child: Text('Delivery information not available')),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -34,8 +59,8 @@ class _DeliveryViewState extends State<DeliveryView> {
             ),
             Container(
               padding: const EdgeInsets.all(8.0),
-              child: const Text("Delivery"),
-            )
+              child: Text(deliveryId!), // Display the delivery ID
+            ),
           ],
         ),
         leading: BackButton(
@@ -84,13 +109,13 @@ class _DeliveryViewState extends State<DeliveryView> {
                     );
                   }, // POD scan btn
                   style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(
-                          Theme.of(context).primaryColor),
-                      foregroundColor: WidgetStateProperty.all(Colors.white),
-                      iconSize: WidgetStateProperty.all(35),
-                      shape: WidgetStateProperty.all(const CircleBorder()),
-                      padding:
-                          WidgetStateProperty.all(const EdgeInsets.all(12))),
+                    backgroundColor:
+                        WidgetStateProperty.all(Theme.of(context).primaryColor),
+                    foregroundColor: WidgetStateProperty.all(Colors.white),
+                    iconSize: WidgetStateProperty.all(35),
+                    shape: WidgetStateProperty.all(const CircleBorder()),
+                    padding: WidgetStateProperty.all(const EdgeInsets.all(12)),
+                  ),
                   child: const Icon(Icons.document_scanner),
                 ),
               ),
@@ -113,22 +138,14 @@ class _DeliveryViewState extends State<DeliveryView> {
                             child: const Text("No")),
                         TextButton(
                             onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                        title: const Text("Delivery Cancelled"),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator
-                                                    .pushNamedAndRemoveUntil(
-                                                        context,
-                                                        "/homePage",
-                                                        (route) => false);
-                                              },
-                                              child: const Text("Ok"))
-                                        ],
-                                      ));
+                              // Invoke the removeDelivery callback
+                              devtools.log("Preparing to remove delivery");
+                              removeDelivery!(deliveryId);
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                "/homePage",
+                                (route) => false,
+                              );
                             },
                             child: const Text("Yes")),
                       ],

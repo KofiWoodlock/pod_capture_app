@@ -32,7 +32,7 @@ void main() async {
         appBarTheme: const AppBarTheme(
             backgroundColor: Color(0xffd3d3d3), foregroundColor: Colors.black),
       ),
-      home: const LoginView(),
+      home: const HomePageView(),
       routes: {
         '/login': (context) => const LoginView(),
         '/register': (context) => const RegisterView(),
