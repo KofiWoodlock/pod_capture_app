@@ -70,7 +70,7 @@ class _PodCaptureViewState extends State<PodCaptureView> {
                   TextButton(
                       onPressed: () {
                         Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/delivery',
+                          '/homePage',
                           (route) => false,
                         );
                       },

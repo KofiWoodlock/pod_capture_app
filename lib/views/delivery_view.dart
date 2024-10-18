@@ -34,16 +34,23 @@ class _DeliveryViewState extends State<DeliveryView> {
   @override
   Widget build(BuildContext context) {
     if (deliveryId == null || removeDelivery == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("No delivery to remove"),
-        ),
-      );
       return Scaffold(
         appBar: AppBar(
           title: const Text('Error'),
         ),
-        body: const Center(child: Text('Delivery information not available')),
+        body: Center(
+          child: Column(
+            children: [
+              const Text('No delivery selected'),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil("/homePage", (route) => false);
+                  },
+                  child: const Text('Return to home'))
+            ],
+          ),
+        ),
       );
     }
 
@@ -96,6 +103,27 @@ class _DeliveryViewState extends State<DeliveryView> {
               child: Image(
                 image: AssetImage('assets/map_placeholder.png'),
                 fit: BoxFit.fill,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("WIP"),
+                        duration: Duration(milliseconds: 600),
+                      ),
+                    );
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        WidgetStateProperty.all(Theme.of(context).primaryColor),
+                    foregroundColor: WidgetStateProperty.all(Colors.white),
+                  ),
+                  child: const Text("Open Maps"),
+                ),
               ),
             ),
             SizedBox(
