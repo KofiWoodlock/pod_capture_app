@@ -23,8 +23,26 @@ You will also need to have a wire that you can connect to your computer and to t
 To do this your device will need to be in developer mode with USB debugging enabled. To read on how to do this see [here](https://developer.android.com/studio/debug/dev-options)
 
 ## Installation Guide & Running
-### Step 1
-Download the code as a zip file. 
+### Step 1 Extract ZIP
+Download the code as a zip file and it should appear in your downloads directory (e.g. C:\path\to\Downloads\pod_capture_app-master.zip)
+Now you want to extract the contents of the zip to a new directory (e.g. C:\Users\yourUsername\testEnvironment)
+### Step 2 Open Project
+Open VSCode
+Click file -> Open Folder
+Select the extracted project folder and open it
+### Step 3 Install Packages
+Open the terminal within vscode
+Run the following command "flutter pub get" to install all dependancies
+### Step 4 Check For Erros
+To ensure the installation of packages was successful 
+Run "flutter doctor"
+If the are any erros see troubleshooting section
+### Step 5 Choose Device
+Connect your android device via USB and enable USB debugging
+Run "flutter devices"
+### Step 6 Run Project
+Lastly, run the app using: "flutter run"
+This will begin the build process on the connected device!
 
 ## Contributing 
 WIP. 
