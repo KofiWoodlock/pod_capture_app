@@ -18,9 +18,13 @@ Once you have setup your IDE you will need the Flutter SDK. You can follow the f
 All the necessary packages can be found in the pubspec.yaml file. After cloning the repository run the command "flutter pub get" to install the required packages. To upgrade the packages to the latest compatible versions run "flutter pub upgrade".
 
 ### Hardware
-To be able to run this project you will also need to have an android device 
+To be able to run this project you will also need to have an android (version >=6) or be running an android SDK (version >=23)
+You will also need to have a wire that you can connect to your computer and to the android device to allow the app to compile. 
+To do this your device will need to be in developer mode with USB debugging enabled. To read on how to do this see [here](https://developer.android.com/studio/debug/dev-options)
 
 ## Installation Guide & Running
+### Step 1
+Download the code as a zip file. 
 
 ## Contributing 
 WIP. 
