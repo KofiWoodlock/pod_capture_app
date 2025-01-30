@@ -6,8 +6,21 @@ What is a POD (proof of delivery)?
 A proof of delivery is simply a document or digital record that confirms a recipient has received the correct goods. It is a vital part of the sales process and supply chain helping to ensure that customers receive their orders accurately and in good condition. 
 
 ## Prerequisites  
+### IDE
+If you already have VSCode (version >=1.77) setup then skip this step.
+To run this project, the preffered IDE would be VSCode on a Windows operating system as that is uniform to the development environment. You will also need to add the dart and flutter extensions to VSCode. 
+If you do not already have VSCode installed for windows the follow the step by step guide here: [install vscode](https://docs.flutter.dev/get-started/editor?tab=vscode)
 
-## Installation Guide
+### Flutter SDK
+Once you have setup your IDE you will need the Flutter SDK. You can follow the following steps to download the SDK within VScode [here](https://docs.flutter.dev/get-started/install/windows/desktop) 
+
+### Packages 
+All the necessary packages can be found in the pubspec.yaml file. After cloning the repository run the command "flutter pub get" to install the required packages. To upgrade the packages to the latest compatible versions run "flutter pub upgrade".
+
+### Hardware
+To be able to run this project you will also need to have an android device 
+
+## Installation Guide & Running
 
 ## Contributing 
 WIP. 
