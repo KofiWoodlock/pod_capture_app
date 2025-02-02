@@ -11,8 +11,10 @@ import 'package:testapp/views/account_view.dart';
 import 'package:testapp/utils/qr_scan_view.dart';
 import 'package:testapp/views/register_view.dart';
 import 'package:testapp/views/settings_view.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() async {
+Future<void> main() async {
+  await dotenv.load();
   // Ensure that plugin services are initialized so that 'availableCameras()'
   // can be called before 'runApp()'
   WidgetsFlutterBinding.ensureInitialized();
