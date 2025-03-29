@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
+import 'package:testapp/utils/utils.dart';
+import 'package:testapp/database/user.dart' as app_user;
+import 'package:testapp/database/database.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -10,6 +13,7 @@ class RegisterView extends StatefulWidget {
 }
 
 class _RegisterViewState extends State<RegisterView> {
+  // Declare controllers for the email and password text fields.
   late final TextEditingController _email;
   late final TextEditingController _password;
 
@@ -133,6 +137,9 @@ class _RegisterViewState extends State<RegisterView> {
   Future<void> _createAccount({required email, password}) async {
     final email = _email.text;
     final password = _password.text;
+    final passwordHash = SHA256.hash(password);
+    devtools.log("Created hashed user password: $passwordHash");
+
     try {
       final userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -140,6 +147,31 @@ class _RegisterViewState extends State<RegisterView> {
         password: password,
       );
       devtools.log(userCredential.toString());
+      // Create record of user in account auth database if user does not already exists
+      try {
+        // Hash user password and get current date time
+        final String passwordHash = SHA256.hash(password);
+        final DateTime createdAt = DateTime.now();
+
+        // Create user data model object and insert arguments
+        final app_user.User newUser = app_user.User(
+          email: email,
+          passwordHash: passwordHash,
+          createdAt: createdAt.toString(),
+        );
+        // Insert user into the database if their account does not already exists
+        final int? userId =
+            await DatabaseService.instance.insertUserIfNotExists(newUser);
+        // Check if user already exists depending on whether a new userId is generated
+        if (userId != null) {
+          devtools.log('Successfully added user to database, userId: $userId');
+          DatabaseService.instance.logAllUsers();
+        } else {
+          devtools.log('User already exists in database');
+        }
+      } catch (dbError) {
+        devtools.log('Database error: $dbError');
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Successfully created account!'),
@@ -180,6 +212,8 @@ class _RegisterViewState extends State<RegisterView> {
             duration: Duration(milliseconds: 800),
           ),
         );
+      } else {
+        devtools.log(e.toString());
       }
     }
   }
