@@ -72,6 +72,27 @@ class DatabaseService {
     return await db.query('users');
   }
 
+  Future<String?> getUserPasswordHash(String email) async {
+    Database db = await instance.db;
+    // Retreive password hash for specified email
+    List<Map<String, dynamic>> hash = await db.query(
+      'users',
+      where: 'email = ?',
+      whereArgs: [email],
+      columns: ['passwordHash'],
+    );
+    // log hash for debbuging
+    devtools.log(hash.toString());
+
+    // check if a password hash exists
+    if (hash.isNotEmpty) {
+      // type cast result to string to allow comparison in login
+      return hash.first['passwordHash'] as String;
+    } else {
+      return null;
+    }
+  }
+
   // Print all users for debugging purposes
   Future logAllUsers() async {
     Database db = await instance.db;
@@ -79,7 +100,7 @@ class DatabaseService {
     List<Map<String, Object?>> users = await db.query('users');
 
     for (var user in users) {
-      // convert each user to a string and log it 
+      // convert each user to a string and log it
       devtools.log(user.toString());
     }
   }

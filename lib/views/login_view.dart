@@ -1,7 +1,10 @@
 // Import the necessary packages for Firebase authentication and Flutter's Material Design widgets.
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:testapp/database/database.dart';
 import 'dart:developer' as devtools show log;
+
+import 'package:testapp/utils/utils.dart';
 
 // Define a stateful widget for the login view.
 class LoginView extends StatefulWidget {
@@ -19,7 +22,7 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void initState() {
-    // Initialize the text controllers when the state is first created.
+    // Initialise the text controllers when the state is first created.
     _email = TextEditingController();
     _password = TextEditingController();
     super.initState();
@@ -184,8 +187,20 @@ class _LoginViewState extends State<LoginView> {
     // When the button is pressed, retrieve the email and password from the text fields.
     final email = _email.text;
     final password = _password.text;
+    // Authenticate user with database
     try {
-      // Attempt to sign in with the provided email and password using FirebaseAuth.
+      final passwordHash =
+          await DatabaseService.instance.getUserPasswordHash(email);
+      if (passwordHash != SHA256.hash(password)) {
+        devtools.log("Incorrect password entered");
+      } else {
+        devtools.log("Correct password entered");
+      }
+    } catch (dbError) {
+      devtools.log("Database error: $dbError");
+    }
+    try {
+      // Attempt to sign in to firebase to allow access to cloud services.
       final userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
