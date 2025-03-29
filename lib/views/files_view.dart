@@ -17,7 +17,7 @@ class _FilesViewState extends State<FilesView> {
   @override
   void initState() {
     super.initState();
-    _loadSavedPdfPath(); // Load saved pdf when widit is initialised
+    _loadSavedPdfPath(); // Load saved pdf when wigit is initialised
   }
 
   void onItemTapped(int index) {
@@ -123,8 +123,9 @@ class _FilesViewState extends State<FilesView> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ListTile(
-                      title: Text('Saved PDF: $filePath'),
+                      title: const Text('Saved PDF'),
                       onTap: () {
+                        // TODO: Decrypt obfuscated file path before opening file
                         OpenFile.open(filePath);
                       },
                       tileColor: Theme.of(context).primaryColor,

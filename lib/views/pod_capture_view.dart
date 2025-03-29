@@ -132,7 +132,7 @@ class _PodCaptureViewState extends State<PodCaptureView> {
                 ElevatedButton(
                   onPressed: () {
                     if (file != null) {
-                      uplaodPdf();
+                      uploadPdf();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -274,7 +274,7 @@ class _PodCaptureViewState extends State<PodCaptureView> {
     }
   }
 
-  void uplaodPdf() async {
+  void uploadPdf() async {
     if (file != null) {
       try {
         final String fileName =
