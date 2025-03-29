@@ -1,15 +1,15 @@
 // Import necessary packages for database and path handling
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'dart:developer' as devtools show log;
 // Import user data model
 import 'package:testapp/database/user.dart';
-
 
 // DatabaseService class manages database operations for users
 class DatabaseService {
   // Singleton instance of DatabaseService
   static final DatabaseService instance = DatabaseService._instance();
-  
+
   // Static database instance to be shared across the application
   static Database? database;
 
@@ -50,24 +50,21 @@ class DatabaseService {
     return await db.insert('users', user.toMap());
   }
 
-Future<int?> insertUserIfNotExists(User user) async {
-  Database db = await instance.db;
-  
-  // First, check if the user already exists
-  List<Map<String, dynamic>> existingUser = await db.query(
-    'users', 
-    where: 'email = ?', 
-    whereArgs: [user.email]
-  );
-  
-  // If no existing user is found, insert the new user
-  if (existingUser.isEmpty) {
-    return await db.insert('users', user.toMap());
+  Future<int?> insertUserIfNotExists(User user) async {
+    Database db = await instance.db;
+
+    // First, check if the user already exists
+    List<Map<String, dynamic>> existingUser =
+        await db.query('users', where: 'email = ?', whereArgs: [user.email]);
+
+    // If no existing user is found, insert the new user
+    if (existingUser.isEmpty) {
+      return await db.insert('users', user.toMap());
+    }
+
+    // Return null if user already exists
+    return null;
   }
-  
-  // Return null if user already exists
-  return null;
-}
 
   // Retrieve all users from the database
   Future<List<Map<String, dynamic>>> queryAllUsers() async {
@@ -75,18 +72,36 @@ Future<int?> insertUserIfNotExists(User user) async {
     return await db.query('users');
   }
 
+  // Print all users for debugging purposes
+  Future logAllUsers() async {
+    Database db = await instance.db;
+    // Get all users from db
+    List<Map<String, Object?>> users = await db.query('users');
+
+    for (var user in users) {
+      // convert each user to a string and log it 
+      devtools.log(user.toString());
+    }
+  }
+
   // Update an existing user in the database
-  // NOTE: There's a typo in the table name ('gfg_users' instead of 'users')
   Future<int> updateUser(User user) async {
     Database db = await instance.db;
-    return await db.update('gfg_users', user.toMap(), where: 'id = ?', whereArgs: [user.id]);
+    return await db
+        .update('users', user.toMap(), where: 'id = ?', whereArgs: [user.id]);
   }
 
   // Delete a user from the database by their ID
-  // NOTE: There's a typo in the table name ('gfg_users' instead of 'users')
   Future<int> deleteUser(int id) async {
     Database db = await instance.db;
-    return await db.delete('gfg_users', where: 'id = ?', whereArgs: [id]);
+    return await db.delete('users', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // Delete all users from users table
+  Future clearUsers() async {
+    Database db = await instance.db;
+    await db.execute('''
+    DELETE FROM users;
+      ''');
   }
 }
-
