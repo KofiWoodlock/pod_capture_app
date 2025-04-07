@@ -83,7 +83,7 @@ class _FilesViewState extends State<FilesView> {
           ? ListView.builder(
               itemCount: _savedPdfFilePaths.length,
               itemBuilder: (context, index) {
-                final filePath = _savedPdfFilePaths[index];
+                final filePath = _savedPdfFilePaths[index].split("cache/").last;
                 return Dismissible(
                   key: Key(filePath),
                   direction: DismissDirection.endToStart,
@@ -123,7 +123,7 @@ class _FilesViewState extends State<FilesView> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ListTile(
-                      title: const Text('Saved PDF'),
+                      title: Text('Saved PDF: $filePath'),
                       onTap: () {
                         OpenFile.open(filePath);
                       },
