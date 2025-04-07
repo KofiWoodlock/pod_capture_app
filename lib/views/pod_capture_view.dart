@@ -218,11 +218,15 @@ class _PodCaptureViewState extends State<PodCaptureView> {
         final image = pw.MemoryImage(
           File(picture).readAsBytesSync(),
         );
-        pdf.addPage(pw.Page(build: (pw.Context context) {
-          return pw.Center(
-            child: pw.Image(image),
-          );
-        }));
+        pdf.addPage(
+          pw.Page(
+            build: (pw.Context context) {
+              return pw.Center(
+                child: pw.Image(image),
+              );
+            },
+          ),
+        );
       }
       final output = await getTemporaryDirectory();
       file = File("${output.path}/$date-$pdfId.pdf");

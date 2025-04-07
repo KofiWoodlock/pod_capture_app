@@ -1,8 +1,8 @@
 // Import the necessary packages for Firebase authentication and Flutter's Material Design widgets.
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; // Frontend widgets package 
 import 'package:testapp/database/database.dart';
-import 'dart:developer' as devtools show log;
+import 'dart:developer' as devtools show log; // logging framework for debugging
 
 import 'package:testapp/utils/utils.dart';
 
@@ -36,7 +36,7 @@ class _LoginViewState extends State<LoginView> {
     super.dispose();
   }
 
-// Main Code for page
+// Main Code for page design (frontend)
   @override
   Widget build(BuildContext context) {
     // Build the UI for the login screen.

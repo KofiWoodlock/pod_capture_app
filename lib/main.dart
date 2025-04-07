@@ -33,7 +33,9 @@ Future<void> main() async {
         appBarTheme: const AppBarTheme(
             backgroundColor: Color(0xffd3d3d3), foregroundColor: Colors.black),
       ),
-      home: const LoginView(),
+      home:
+          const LoginView(), // Set the page we want to be displayed upon loading of app
+      // Define routes to allow navigation from different pages
       routes: {
         '/login': (context) => const LoginView(),
         '/register': (context) => const RegisterView(),

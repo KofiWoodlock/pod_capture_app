@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 import 'package:testapp/utils/utils.dart';
-import 'package:testapp/database/user.dart' as app_user;
+import 'package:testapp/database/user.dart' as app_user; // User data model 
 import 'package:testapp/database/database.dart';
 
 class RegisterView extends StatefulWidget {
@@ -137,8 +137,6 @@ class _RegisterViewState extends State<RegisterView> {
   Future<void> _createAccount({required email, password}) async {
     final email = _email.text;
     final password = _password.text;
-    final passwordHash = SHA256.hash(password);
-    devtools.log("Created hashed user password: $passwordHash");
 
     try {
       final userCredential =
@@ -149,8 +147,9 @@ class _RegisterViewState extends State<RegisterView> {
       devtools.log(userCredential.toString());
       // Create record of user in account auth database if user does not already exists
       try {
-        // Hash user password and get current date time
+        // Hash user password and get current date time to datestamp account creation
         final String passwordHash = SHA256.hash(password);
+        devtools.log("Created hashed user password: $passwordHash");
         final DateTime createdAt = DateTime.now();
 
         // Create user data model object and insert arguments

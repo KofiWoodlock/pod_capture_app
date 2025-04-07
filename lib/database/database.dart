@@ -1,4 +1,3 @@
-// Import necessary packages for database and path handling
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:developer' as devtools show log;
@@ -75,20 +74,25 @@ class DatabaseService {
   Future<String?> getUserPasswordHash(String email) async {
     Database db = await instance.db;
     // Retreive password hash for specified email
-    List<Map<String, dynamic>> hash = await db.query(
-      'users',
-      where: 'email = ?',
-      whereArgs: [email],
-      columns: ['passwordHash'],
-    );
-    // log hash for debbuging
-    devtools.log(hash.toString());
+    try {
+      List<Map<String, dynamic>> hash = await db.query(
+        'users',
+        where: 'email = ?',
+        whereArgs: [email],
+        columns: ['passwordHash'],
+      );
+      // log hash for debbuging
+      devtools.log(hash.toString());
 
-    // check if a password hash exists
-    if (hash.isNotEmpty) {
-      // type cast result to string to allow comparison in login
-      return hash.first['passwordHash'] as String;
-    } else {
+      // check if a password hash exists
+      if (hash.isNotEmpty) {
+        // type cast result to string to allow comparison in login
+        return hash.first['passwordHash'] as String;
+      } else {
+        return null;
+      }
+    } on Exception catch (dbError) {
+      devtools.log(dbError.toString());
       return null;
     }
   }
@@ -110,6 +114,23 @@ class DatabaseService {
     Database db = await instance.db;
     return await db
         .update('users', user.toMap(), where: 'id = ?', whereArgs: [user.id]);
+  }
+
+  // update an existings users password hash when they reset password
+  Future<int> updatePassword(String email, String newPasswordHash) async {
+    Database db = await instance.db;
+    // Create map with password hash value to update it
+    Map<String, dynamic> passwordData = {
+      'passwordHash': newPasswordHash,
+    };
+
+    // Update password hash for matching user email
+    return await db.update(
+      'users',
+      passwordData,
+      where: 'email = ?',
+      whereArgs: [email],
+    );
   }
 
   // Delete a user from the database by their ID

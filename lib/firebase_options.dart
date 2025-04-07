@@ -3,7 +3,6 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
@@ -31,49 +30,49 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static FirebaseOptions web = FirebaseOptions(
-    apiKey: dotenv.env['API_KEY_WEB']!,
-    appId: dotenv.env['APP_ID_WEB']!,
-    messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
-    projectId: dotenv.env['PROJECT_ID']!,
+static const FirebaseOptions web = FirebaseOptions(
+     apiKey: 'AIzaSyA6SLNUD1WjjZHUx4tYhfrtidtuBYBJawI',
+     appId: '1:449894180065:web:d3d0c951cf34580ef0c3a0',
+     messagingSenderId: '449894180065',
+     projectId: 'testproject-kfw01',
     authDomain: 'testproject-kfw01.firebaseapp.com',
-    storageBucket: dotenv.env['STORAGE_BUCKET']!,
+    storageBucket: 'testproject-kfw01.appspot.com',
     measurementId: 'G-QSE3X8RQRE',
   );
 
-  static FirebaseOptions android = FirebaseOptions(
-    apiKey: dotenv.env['API_KEY_ANDROID']!,
-    appId: dotenv.env['APP_ID_ANDROID']!,
-    messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
-    projectId: dotenv.env['PROJECT_ID']!,
-    storageBucket: dotenv.env['STORAGE_BUCKET']!,
+  static const FirebaseOptions android = FirebaseOptions(
+     apiKey: 'AIzaSyDl1eDSn4T-zEH0uC822BxUUk_5tkVDE8s', 
+     appId: '1:449894180065:android:9136c2b28ab05593f0c3a0',
+     messagingSenderId: '449894180065',
+     projectId: 'testproject-kfw01',
+     storageBucket: 'testproject-kfw01.appspot.com',
   );
 
-  static FirebaseOptions ios = FirebaseOptions(
-    apiKey: dotenv.env['API_KEY_IOS']!,
-    appId: dotenv.env['APP_ID_IOS']!,
-    messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
-    projectId: dotenv.env['PROJECT_ID']!,
-    storageBucket: dotenv.env['STORAGE_BUCKET']!,
+  static const FirebaseOptions ios = FirebaseOptions(
+     apiKey: 'AIzaSyBXrATETt4fAJltS9eONagm3AYXA4I5w8A',
+     appId: '1:449894180065:ios:51b349005cbcc0ecf0c3a0',
+     messagingSenderId: '449894180065',
+     projectId: 'testproject-kfw01',
+     storageBucket: 'testproject-kfw01.appspot.com',
     iosBundleId: 'com.testapp.testapp',
   );
 
-  static FirebaseOptions macos = FirebaseOptions(
-    apiKey: dotenv.env['API_KEY_MACOS']!,
-    appId: dotenv.env['APP_ID_MACOS']!,
-    messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
-    projectId: dotenv.env['PROJECT_ID']!,
-    storageBucket: dotenv.env['STORAGE_BUCKET']!,
+  static const FirebaseOptions macos = FirebaseOptions(
+     apiKey: 'AIzaSyBXrATETt4fAJltS9eONagm3AYXA4I5w8A',
+     appId: '1:449894180065:ios:51b349005cbcc0ecf0c3a0',
+     messagingSenderId: '449894180065',
+     projectId: 'testproject-kfw01',
+     storageBucket: 'testproject-kfw01.appspot.com',
     iosBundleId: 'com.testapp.testapp',
   );
 
-  static FirebaseOptions windows = FirebaseOptions(
-    apiKey: dotenv.env['API_KEY_WINDOWS']!,
-    appId: dotenv.env['APP_ID_WINDOWS']!,
-    messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
-    projectId: dotenv.env['PROJECT_ID']!,
+  static const FirebaseOptions windows = FirebaseOptions(
+     apiKey: 'AIzaSyA6SLNUD1WjjZHUx4tYhfrtidtuBYBJawI',
+     appId: '1:449894180065:web:8bc5c79f75917c1ef0c3a0',
+    messagingSenderId: '449894180065',
+     projectId: 'testproject-kfw01',
     authDomain: 'testproject-kfw01.firebaseapp.com',
-    storageBucket: dotenv.env['STORAGE_BUCKET']!,
+    storageBucket: 'testproject-kfw01.appspot.com',
     measurementId: 'G-23ST130WYN',
   );
 }

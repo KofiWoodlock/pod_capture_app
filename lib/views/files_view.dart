@@ -125,7 +125,6 @@ class _FilesViewState extends State<FilesView> {
                     child: ListTile(
                       title: const Text('Saved PDF'),
                       onTap: () {
-                        // TODO: Decrypt obfuscated file path before opening file
                         OpenFile.open(filePath);
                       },
                       tileColor: Theme.of(context).primaryColor,
